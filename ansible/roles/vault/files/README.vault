@@ -1,0 +1,16 @@
+## Vault first steps
+
+export VAULT_ADDR=https://IP:8200
+
+# Give the client the CA cert or use
+# -tls-skip-verify to connect from the host
+vault init  -ca-cert=/path/to/crt
+vault unseal -ca-cert=/path/to/cert
+
+export VAULT_TOKEN=<put here the token>
+
+# Create the policies
+./bin/vault_polcies.sh
+
+# Create the tree
+./bin/vault_tree.sh

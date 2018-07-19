@@ -1,0 +1,9 @@
+- user:
+    name: "{{consul_system_user}}"
+    comment: "Consul system uer"
+    system: yes
+
+- user:
+    name: "{{vault_system_user}}"
+    comment: "Vault system uer"
+    system: yes

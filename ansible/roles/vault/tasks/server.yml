@@ -1,0 +1,7 @@
+---
+- name: Change the hostname's domain
+  lineinfile:
+    dest: /etc/hostname
+    regexp: '^(.*).dev.cbre.com$'
+    line: '\1.edpnp.cbre.eu'
+    backrefs: yes

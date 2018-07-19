@@ -1,0 +1,8 @@
+---
+- include: packages.yml
+- include: user.yml
+- include: server.yml
+- include: consul.yml
+- include: vault.yml
+- include: service.yml
+

@@ -1,0 +1,12 @@
+[Unit]
+Description=vault server
+Requires=network.target
+After=network.target
+
+[Service]
+EnvironmentFile=-/etc/sysconfig/vault
+Restart=on-failure
+ExecStart=/usr/sbin/vault server -config=/etc/vault/vault.json
+
+[Install]
+WantedBy=multi-user.target

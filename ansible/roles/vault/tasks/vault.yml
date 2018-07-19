@@ -1,0 +1,39 @@
+---
+- name: Check vault is in sbin
+  stat: path="{{vault_app['bin_location']}}/vault"
+  register: vault_bin_stat
+
+- name: Unarchive vault
+  unarchive: 
+    src: "{{vault_app['url']}}"
+    dest: "{{vault_app['bin_location']}}"
+    remote_src: yes
+  when: (vault_bin_stat.stat.islnk is not defined)
+
+# Copy files to the server
+- template: src=vault_export.sh.j2 dest=/etc/profile.d/vault_export.sh mode=0644 owner=root group=root
+- copy: src=vault.service dest=/etc/systemd/system mode=0644 owner=root group=root
+
+- file: path="{{vault_app['config_location']}}" state=directory owner=vault group=vault mode=u=rwX,g=rX,o=rX recurse=yes
+- file: path="{{vault_app['config_location']}}/.secret" mode=0600 owner=root group=root state=touch
+- template: src=templates/vault-{{mode}}.j2 dest="{{vault_app['config_location']}}/vault.json" force=true
+- file: path="{{vault_app['config_location']}}/policies" state=directory 
+- copy: src=policies/ dest="{{vault_app['config_location']}}/policies/"
+- file: path="{{vault_app['config_location']}}/bin" state=directory 
+- copy: src=vault_policies.sh dest=/etc/vault/bin/ mode=700 owner=root group=root
+- copy: src=vault_tree.sh dest=/etc/vault/bin/ mode=700 owner=root group=root
+- file: path="{{vault_app['config_location']}}/certs" state=directory 
+
+- name: Copy Certificate
+  copy:
+    src: /home/ec2-user/certs/edpnp.cbre.eu.crt
+    dest: /etc/vault/certs/
+    mode: 0644
+    remote_src: yes
+
+- name: Copy Key
+  copy:
+    src: /home/ec2-user/certs/edpnp.cbre.eu.key
+    dest: /etc/vault/certs/
+    mode: 0600
+    remote_src: yes

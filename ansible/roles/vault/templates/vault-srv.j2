@@ -1,0 +1,9 @@
+backend "consul" {
+  address = "{{ ansible_hostname }}.{{domain}}:{{consul_main_server['host_port']}}"
+  path = "vault"
+}
+listener "tcp" {
+  address = "{{ ansible_hostname }}.{{domain}}:{{vault_main_server['host_port']}}"
+  tls_disable = 1
+}
+

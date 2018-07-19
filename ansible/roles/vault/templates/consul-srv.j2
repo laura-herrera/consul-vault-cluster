@@ -1,0 +1,21 @@
+{
+  "datacenter": "1",
+  "data_dir": "{{consul_main_server['data_dir']}}",
+  "log_level": "{{consul_main_server['log_level']}}",
+  "server": true,
+  "bootstrap": true,
+  "bind_addr": "{{ ansible_eth0.ipv4.address }}",
+  "enable_syslog": true,
+  "addresses": {
+    "http": "0.0.0.0",
+    "https": "0.0.0.0"
+  },
+  "ports": {
+    "http":  8500,
+    "https": 8900
+  },
+  "encrypt": "{{consul_app['consul_secret']}}",
+  "key_file": "{{consul_app['certs_location']}}/{{consul_app['consul_ssl_key']}}",
+  "cert_file": "{{consul_app['certs_location']}}/{{consul_app['consul_ssl_cert']}}",
+  "node_name": "{{ansible_hostname}}.{{domain}}"
+}

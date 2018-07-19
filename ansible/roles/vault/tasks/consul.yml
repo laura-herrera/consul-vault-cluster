@@ -1,0 +1,35 @@
+---
+- name: Check consul is in sbin
+  stat: path="{{consul_app['bin_location']}}/consul"
+  register: consul_bin_stat
+
+- name: Unarchive consul
+  unarchive: 
+    src: "{{consul_app['url']}}"
+    dest: "{{consul_app['bin_location']}}"
+    remote_src: yes
+  when: (consul_bin_stat.stat.islnk is not defined)
+
+# Copy files to server
+- template: src=consul_export.sh.j2 dest=/etc/profile.d/consul_export.sh mode=0644 owner=root group=root
+- file: path="{{consul_app['config_location']}}" state=directory owner=consul group=consul mode=u=rwX,g=rX,o=rX recurse=yes
+- file: path="{{consul_app['config_location']}}/server" state=directory 
+- template: src=templates/consul-{{mode}}.j2 dest="{{consul_app['config_location']}}/server/consul.json" force=true
+- copy: src=consul.service dest=/etc/systemd/system mode=0644 owner=root group=root
+- file: path="{{consul_app['config_location']}}/certs" state=directory 
+- file: path="{{consul_main_server['data_dir']}}" state=directory owner=consul group=consul mode=u=rwX,g=rX,o=rX recurse=yes
+
+# Copy Self Signed Cert and Key
+- name: Copy Certificate
+  copy:
+    src: /home/ec2-user/certs/edpnp.cbre.eu.crt
+    dest: /etc/consul/certs/
+    mode: 0644
+    remote_src: yes
+
+- name: Copy Key
+  copy:
+    src: /home/ec2-user/certs/edpnp.cbre.eu.key
+    dest: /etc/consul/certs/
+    mode: 0600
+    remote_src: yes

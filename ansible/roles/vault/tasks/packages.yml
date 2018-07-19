@@ -1,0 +1,14 @@
+- name: gather all installed packages
+  command: bash -c "rpm -qa | tr '\n' ' '"
+  register: packages_installed
+
+- assert:
+    that:
+      - " packages_installed.stdout.split(' ') | length > 0"
+
+- name: Install essential packages
+  yum: name={{ item.name }} state={{ item.state }}
+  with_items:
+    - "{{vault_needed_packages}}"
+  when: (item.name not in packages_installed.stdout.split(' ')) and (item.state == 'present')
+  become: true

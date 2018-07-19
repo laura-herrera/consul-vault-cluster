@@ -1,0 +1,16 @@
+backend "consul" {
+  address = "{{ ansible_hostname }}.{{domain}}:{{consul_main_server['host_port']}}"
+  path = "vault"
+  tls_cert_file = "{{consul_app['certs_location']}}/{{consul_app['consul_ssl_cert']}}"
+  tls_key_file = "{{consul_app['certs_location']}}/{{consul_app['consul_ssl_key']}}"
+
+  redirect_addr = "https://{{ ansible_hostname }}.{{domain}}:{{vault_main_server['host_port']}}"
+}
+
+listener "tcp" {
+  address = "{{ ansible_hostname }}.{{domain}}:{{vault_main_server['host_port']}}"
+  tls_disable = 0
+  tls_cert_file = "{{vault_app['certs_location']}}/{{vault_app['consul_ssl_cert']}}"
+  tls_key_file = "{{vault_app['certs_location']}}/{{vault_app['consul_ssl_key']}}"
+}
+

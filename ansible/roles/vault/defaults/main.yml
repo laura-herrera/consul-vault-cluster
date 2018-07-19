@@ -1,0 +1,56 @@
+---
+# defaults for vault
+vault_main_server:
+  host_port: 8200
+  host_extra_ports:
+    - 8201
+    - 8202
+    - 8203
+
+# defaults for consul backend
+consul_main_server:
+  host_port: 8500
+  host_extra_ports:
+    - 8300
+    - 8301
+    - 8302
+    - 8400
+    - 8600
+    - 8900
+  data_dir: "/var/consul"
+  log_level: "INFO"
+  boot_expect: "3"
+
+vault_app:
+  url: "https://releases.hashicorp.com/vault/0.10.3/vault_0.10.3_linux_amd64.zip"
+  checksum: "ffec1c201f819f47581f54c08653a8d17ec0a6699854ebd7f6625babb9e290ed"
+  algo: "sha256"
+  bin_location: "/usr/sbin"
+  config_location: "/etc/vault"
+  certs_location: "/etc/vault/certs"
+  consul_ssl_key: "file.key"
+  consul_ssl_cert: "file.crt"
+
+consul_app:
+  url: "https://releases.hashicorp.com/consul/1.2.0/consul_1.2.0_linux_amd64.zip"
+  checksum: "85d84ea3f6c68d52549a29b00fd0035f72c2eabff672ae46ca643cb407ef94b4"
+  algo: "sha256"
+  bin_location: "/usr/sbin"
+  config_location: "/etc/consul"
+  certs_location: "/etc/consul/certs"
+  consul_secret: "<my_secret>"
+  consul_ssl_key: "file.key"
+  consul_ssl_cert: "file.crt"
+
+consul_system_user: consul
+vault_system_user: vault
+domain: "mydomain.com"
+
+go_version: "1.10.2"
+
+vault_backend_commands:
+  - "setcap cap_ipc_lock=+ep /usr/sbin/vault"
+  - "restorecon -v /usr/sbin/vault"
+
+vault_needed_packages:
+  - { name: policycoreutils-python, state: present }
